@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="body">
+    <header class="header-top">
+        <nav class="navbar has-background-primary-light" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+              <a class="navbar-item" href="#">
+                <img src="https://cdn-icons-png.flaticon.com/512/1089/1089876.png">
+                <h1 class="subtitle ml-5">App Chat</h1>
+              </a>
+              <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+              </a>
+            </div>
+          
+            <div id="navbarBasicExample" class="navbar-menu">
+              <div class="navbar-start">
+                <!-- <a class="navbar-item">
+                  Documents
+                </a> -->
+                <div class="navbar-item has-dropdown is-hoverable">
+                  <a class="navbar-link">
+                    Contacts
+                  </a>
+                  <div class="navbar-dropdown" id="dropdownusers">
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="navbar-end">
+                <div class="navbar-item">
+                  <div class="buttons">
+                    <a class="button is-primary">
+                      <strong>Sign up</strong>
+                    </a>
+                    <a class="button is-light">
+                      Log in
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+          </nav>
+          <div class="tovar">
+              <span class="icon-text container-box tovar-info">
+                  <span class="icon">
+                      <i class="fa-solid fa-user"></i>
+                  </span>
+                  <span class="tag is-success is-light" id="status" >en linea</span>
+                  <div class="control container-box">
+                      <span class="m-5">Name:</span>
+                      <input class="input is-normal" id="username" type="text" placeholder="NAME" value="User1" autocomplete="name">
+                  </div>
+              </span>
+              <div class="count-connect">
+                  <figure class="image is-32x32">
+                      <img class="is-rounded" src="https://i.postimg.cc/SQwQbQjM/user.png">
+                  </figure>
+                  <span class="tag is-info is-light ml-4" id="count">Info</span>
+                  <span class="tag is-info is-light ml-4" id="typing"></span>
+              </div>
+          </div>
+    </header>
+    <main class="main-main" >
+        <div class="container-main">
+          <div class="box-padding-botton">
+            <div class="container border-radius p-4 m-2" id="containerMsg">
+            </div>
+          </div>
+        </div>
+    </main>
+    <footer class="footer footer-bar has-background-primary-light">
+        <div class="content has-text-centered">
+            <form id="form">
+                <div class="control container-box">
+                    <input class="input is-focused" id="msg" type="text" placeholder="Escribir..." autofocus autocomplete="off"/>
+                    <button class="button is-success ml-2" type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+      </footer>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>

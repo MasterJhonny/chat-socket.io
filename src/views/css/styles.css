@@ -1,9 +1,10 @@
-.body {
+html, body {
     overflow: hidden;
 }
 
 .header-top {
     width: 100%;
+    height: 14vh;
 }
 
 .contact {
@@ -24,15 +25,18 @@
 }
 
 .main-main {
+    width: 100%;
+    height: 70vh;
     display: flex;
     align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .container-main {
     box-sizing: border-box;
     width: 100%;
-    height: calc(100vh - 280px);
-    
+    height: 100%;
     overflow-y: scroll;
     scroll-behavior: smooth;
 }
@@ -70,14 +74,34 @@
     max-width: 500px;
 }
 
+/* estylos Emoji */
+.container__emogis {
+    width: 100%;
+    height: 300px;
+    display: none;
+    --num-columns: 6;
+    --emoji-size: 1.4rem;
+    /* --background: #161853; */
+}
+
 
 .footer-bar {
     width: 100%;
-    height: 100px;
+    height: 10vh;
     border-top: 1px solid #ccc;
 }
 
+.content {
+    display: flex;
+    justify-content: space-around;
+}
+
+.content form {
+    width: 100%;
+}
+
 .container-box {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -86,4 +110,29 @@
 .box-end {
     justify-content: flex-end;
 
+}
+
+/* -----global estiles-------*/
+.view {
+    display: flex;
+}
+
+
+/* --------responseive------- */
+@media (min-width: 400px) {
+    .container__emogis {
+        --num-columns: 8;
+    }
+}
+
+@media (min-width: 700px) {
+    .container__emogis {
+        --num-columns: 10;
+    }
+}
+
+@media (min-width: 1000px) {
+    .container__emogis {
+        --num-columns: 14;
+    }
 }

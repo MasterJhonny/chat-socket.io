@@ -19,25 +19,24 @@ app.get('/', (req, res) => {
 io.on("connect", socket => {
 
     const userId = socket.id; 
+
+    console.log("id connect", userId);
     const username = "User-" + userId.substring(0, 3);
     
     // -------eventos de connection--------------//
-    io.to(userId).emit("username", username);
+    io.to(userId).emit("userdata", {
+        id: userId,
+        name: username
+    });
+
     listUsers.push({
         id: userId,
         username
     })
 
-    // ----list users---//
-    socket.on("disconnect", () => {
-        listUsers.pop();
-        console.log("Disconnect:client", userId);
-        io.emit("welcome", {
-            listUsers: listUsers,
-            count: io.engine.clientsCount
-        });
-    })
+    console.log(listUsers)
 
+    
     // --------------eventos de emicion -------------//
     // emit count
     io.emit("welcome", {
@@ -58,12 +57,25 @@ io.on("connect", socket => {
 
     // // emit one
     // socket.on("last", (message) => {
-    //     const id = listSocket[listSocket.length - 1];
+        //     const id = listSocket[listSocket.length - 1];
+        
+        //     io.to(id).emit("saludo", message);
+        
+        // }) 
 
-    //     io.to(id).emit("saludo", message);
 
-    // }) 
+        
+        
+    // ----list users---//
+    socket.on("disconnect", () => {
+        listUsers.pop();
 
+        console.log("Disconnect:client", userId);
+        io.emit("welcome", {
+            listUsers: listUsers,
+            count: io.engine.clientsCount
+        });
+    })
 })
 
 httpServer.listen(port, () => {

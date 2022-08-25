@@ -7,6 +7,13 @@ const containerMsg = document.getElementById("containerMsg");
 const form = document.getElementById("form");
 const typing = document.getElementById("typing");
 const dropdownusers = document.getElementById("dropdownusers");
+const btnEmoji = document.getElementById("btnEmoji");
+const cajaEmojis = document.querySelector('emoji-picker');
+
+// instance emoji piker
+const emojis = new Emoji(cajaEmojis, btnEmoji, msg);
+
+let userLocal = {}
 
 function socketStatus () {
     if (socket.connected) {
@@ -31,7 +38,7 @@ function loadMessageLocal(data) {
             <p id="name">${data.name}</p>
             <p id="hora">${hora >= 10 ? hora:'0'+hora}:${min >= 10 ? min:'0'+min}</p>
             </div>
-            <div class="message-body" id="message">
+            <div class="message-body is-size-6" id="message">
                 ${data.message}
             </div>
         </article>
@@ -51,7 +58,7 @@ function loadMessageEmit(data) {
             <p id="name">${data.name}</p>
             <p id="hora">${hora >= 10 ? hora:'0'+hora}:${min >= 10 ? min:'0'+min}</p>
             </div>
-            <div class="message-body" id="message">
+            <div class="message-body is-size-6" id="message">
                 ${data.message}
             </div>
         </article>
@@ -87,7 +94,8 @@ function updateUsername (initial, username) {
 }
 
 socket.on('connect', () => {
-    console.log('connection!')
+    console.log('connection!', socket.id);
+    
     socketStatus()
     
 })
@@ -102,16 +110,17 @@ socket.on('welcome', (data) => {
     loadListUsers(data.listUsers)
 })
 
-socket.on('username', (nikname) => {
-    username.value = nikname;
-    console.log(nikname)
+socket.on('userdata', (data) => {
+    username.value = data.name;
+    console.log(data);
+    userLocal = {...data}
 })
 
 socket.on('message:received', (data) => {
     containerMsg.innerHTML += loadMessageEmit(data.message);
     const initial = data.message.name.charAt(0).toUpperCase();
     const userItem = document.getElementById(data.message.id);
-    userItem.innerHTML = updateUsername(initial, data.message.name);
+    // userItem.innerHTML = updateUsername(initial, data.message.name);
 })
 
 socket.on("typing:received", (status) => {
@@ -123,13 +132,14 @@ form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (msg.value) {
         const data = {
-            id: socket.id,
-            name: username.value,
-            message: msg.value + " 😀"
+            ...userLocal,
+            message: msg.value
         }
         containerMsg.innerHTML += loadMessageLocal(data);
-        const userItem = document.getElementById(socket.id);
-        userItem.innerHTML = updateUsername(username.value.charAt(0).toUpperCase(), username.value);
+        console.log(data);
+        const userItem = document.getElementById(data.id);
+        console.log(userItem)
+        // userItem.innerHTML = updateUsername(data.name.charAt(0).toUpperCase(), data.name);
         socket.emit('message:send', data);
         msg.value = "";
         socket.emit("typing:send", ""); 
@@ -141,7 +151,19 @@ msg.addEventListener("input", (e) => {
 })
 
 
-//------toogle button-----//
+
+// -------events emojis-----------//
+btnEmoji.onclick = () => {
+    emojis.views();
+} 
+  
+cajaEmojis.addEventListener('emoji-click', e => {
+emojis.write(e);
+})
+  
+
+
+//------toogle button menu-----//
 document.addEventListener('DOMContentLoaded', () => {
 
     // Get all "navbar-burger" elements

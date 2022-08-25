@@ -1,0 +1,4 @@
+# avances
+- fix header, bar name, status
+- fix unique id socket
+- mesage personales 

@@ -1,15 +1,23 @@
-html, body {
+html {
+    overflow-y: scroll;
+}
+
+body {
     overflow: hidden;
 }
 
 .header-top {
     width: 100%;
-    height: 14vh;
+    /* height: 14vh; */
 }
 
 .contact {
     display: flex;
     align-items: center;
+}
+
+.btn-point {
+    cursor: pointer;
 }
 
 .user-item {
@@ -47,11 +55,20 @@ html, body {
     padding-bottom: 10px;
 }
 
+.container-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .tovar {
     background-color: #ffff;
     position: relative;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+}
+.tovar-info {
+    padding-top: 16px;
 }
 
 .count-connect {
@@ -100,12 +117,6 @@ html, body {
     width: 100%;
 }
 
-.container-box {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .box-end {
     justify-content: flex-end;
@@ -125,9 +136,22 @@ html, body {
     }
 }
 
+@media (min-width: 480px) {
+    .container__emogis {
+        --num-columns: 8;
+    }
+    .tovar-info {
+        padding-top: 0;
+    }
+}
+
+
 @media (min-width: 700px) {
     .container__emogis {
         --num-columns: 10;
+    }
+    html, body {
+        overflow: hidden;
     }
 }
 

@@ -6,6 +6,7 @@ const username = document.getElementById("username");
 const containerMsg = document.getElementById("containerMsg");
 const form = document.getElementById("form");
 const typing = document.getElementById("typing");
+const tomessage = document.getElementById("tomessage");
 const dropdownusers = document.getElementById("dropdownusers");
 const btnEmoji = document.getElementById("btnEmoji");
 const cajaEmojis = document.querySelector('emoji-picker');
@@ -14,6 +15,14 @@ const cajaEmojis = document.querySelector('emoji-picker');
 const emojis = new Emoji(cajaEmojis, btnEmoji, msg);
 
 let userLocal = {}
+let statusToMessages = "Todos";
+
+function hadleClick (el) {
+    const name = el.innerText.split("\n", 2)[1];
+    console.log(name)
+    tomessage.textContent = name;
+    statusToMessages = el.id;
+}
 
 function socketStatus () {
     if (socket.connected) {
@@ -28,14 +37,15 @@ function socketStatus () {
 }
 
 function loadMessageLocal(data) {
+    const { toMessage } = data;
     const date = new Date();
     const hora = date.getHours();
     const min = date.getMinutes();
     return `
     <div class="msg-container box-end">
-        <article class="message is-info is-small msg">
+        <article class="message ${toMessage === "Todos" ? "is-info" : "is-warning"} is-small msg">
             <div class="message-header">
-            <p id="name">${data.name}</p>
+            <p id="name">${data.name}</p> ${toMessage === "Todos" ? "mensaje a todos" : "mensaje privado"}
             <p id="hora">${hora >= 10 ? hora:'0'+hora}:${min >= 10 ? min:'0'+min}</p>
             </div>
             <div class="message-body is-size-6" id="message">
@@ -48,14 +58,15 @@ function loadMessageLocal(data) {
 
 
 function loadMessageEmit(data) {
+    const { toMessage } = data;
     const date = new Date();
     const hora = date.getHours();
     const min = date.getMinutes();
     return `
     <div class="msg-container">
-        <article class="message is-link is-small msg">
+        <article class="message ${toMessage === "Todos" ? "is-link" : "is-warning"} is-small msg">
             <div class="message-header">
-            <p id="name">${data.name}</p>
+            <p id="name">${data.name}</p> ${toMessage === "Todos" ? "mensaje a todos" : "mensaje privado"}
             <p id="hora">${hora >= 10 ? hora:'0'+hora}:${min >= 10 ? min:'0'+min}</p>
             </div>
             <div class="message-body is-size-6" id="message">
@@ -71,14 +82,16 @@ function loadListUsers (list) {
 
     dropdownusers.innerHTML = "";
 
+    console.log(userLocal)
+
     list.forEach(item => {
-        const initial = item.username.charAt(0).toUpperCase();
+        const initial = item.name.charAt(0).toUpperCase();
         dropdownusers.innerHTML += `
-        <span class="navbar-item contact" id="${item.id}">
+        <span class="navbar-item contact ${userLocal.id === item.id ? null : "btn-point"}" id="${item.id}" name="${item.name}" ${userLocal.id === item.id ? null : 'onClick="hadleClick(this)"'}>
             <figure class="image is-32x32">
                 <span class="user-item">${initial}</span>
             </figure>
-            <span class="tag is-link is-light ml-4">${item.username}</span>
+            <span class="tag is-link is-light ml-4">${item.name}</span>
         </span>
         `;
     })
@@ -93,6 +106,8 @@ function updateUsername (initial, username) {
     `;
 }
 
+
+/* -----------on socket io events ---------------*/
 socket.on('connect', () => {
     console.log('connection!', socket.id);
     
@@ -112,15 +127,14 @@ socket.on('welcome', (data) => {
 
 socket.on('userdata', (data) => {
     username.value = data.name;
-    console.log(data);
     userLocal = {...data}
 })
 
 socket.on('message:received', (data) => {
-    containerMsg.innerHTML += loadMessageEmit(data.message);
-    const initial = data.message.name.charAt(0).toUpperCase();
-    const userItem = document.getElementById(data.message.id);
-    // userItem.innerHTML = updateUsername(initial, data.message.name);
+    containerMsg.innerHTML += loadMessageEmit(data);
+    const initial = data.name.charAt(0).toUpperCase();
+    const userItem = document.getElementById(data.id);
+    userItem.innerHTML = updateUsername(initial, data.name);
 })
 
 socket.on("typing:received", (status) => {
@@ -133,24 +147,29 @@ form.addEventListener("submit", (e) => {
     if (msg.value) {
         const data = {
             ...userLocal,
-            message: msg.value
+            name: username.value,
+            message: msg.value,
+            toMessage: statusToMessages,
+            toTyping: ""
         }
         containerMsg.innerHTML += loadMessageLocal(data);
-        console.log(data);
-        const userItem = document.getElementById(data.id);
-        console.log(userItem)
-        // userItem.innerHTML = updateUsername(data.name.charAt(0).toUpperCase(), data.name);
         socket.emit('message:send', data);
+
+        const userItem = document.getElementById(data.id);
+        userItem.innerHTML = updateUsername(data.name.charAt(0).toUpperCase(), data.name);
+
         msg.value = "";
-        socket.emit("typing:send", ""); 
+        socket.emit("typing:send", data); 
     }
 })
 
 msg.addEventListener("input", (e) => {
-    socket.emit("typing:send", username.value + " esta escribiendo...");
+    const data = {
+        toTyping: username.value + " esta escribiendo...",
+        toMessage: statusToMessages
+    }
+    socket.emit("typing:send", data);
 })
-
-
 
 // -------events emojis-----------//
 btnEmoji.onclick = () => {
@@ -158,7 +177,7 @@ btnEmoji.onclick = () => {
 } 
   
 cajaEmojis.addEventListener('emoji-click', e => {
-emojis.write(e);
+    emojis.write(e);
 })
   
 

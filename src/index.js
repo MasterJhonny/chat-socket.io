@@ -2,12 +2,15 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const { User } = require('./user');
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 const port = 3000;
-const listUsers = []
+
+
+let listUsers = []
 
 app.use(express.static(path.join(__dirname, 'views')))
 
@@ -18,21 +21,13 @@ app.get('/', (req, res) => {
 
 io.on("connect", socket => {
 
-    const userId = socket.id; 
-
-    console.log("id connect", userId);
-    const username = "User-" + userId.substring(0, 3);
+    const newUser = new User(socket.id);
+    console.log("id connect", newUser.getId());
     
     // -------eventos de connection--------------//
-    io.to(userId).emit("userdata", {
-        id: userId,
-        name: username
-    });
+    io.to(newUser.getId()).emit("userdata", newUser);
 
-    listUsers.push({
-        id: userId,
-        username
-    })
+    listUsers.push(newUser);
 
     console.log(listUsers)
 
@@ -45,14 +40,29 @@ io.on("connect", socket => {
     });
 
     socket.on("message:send", (data) => {
-        socket.broadcast.emit("message:received", {
-            message: data,
-            users: listUsers
+        listUsers = listUsers.map(user => {
+            if (user.id === data.id) {
+                return {
+                    ...user,
+                    name: data.name
+                };
+            } else {
+                return user;
+            }
         })
+        if (data.toMessage === "Todos") {
+            socket.broadcast.emit("message:received", data);
+        } else {
+            io.to(data.toMessage).emit("message:received", data);
+        }
     })
 
     socket.on("typing:send", (data) => {
-        socket.broadcast.emit("typing:received", data)
+        if(data.toMessage === "Todos") {
+            socket.broadcast.emit("typing:received", data.toTyping)
+        } else {
+            io.to(data.toMessage).emit("typing:received", data.toTyping);
+        }
     })
 
     // // emit one
@@ -68,9 +78,11 @@ io.on("connect", socket => {
         
     // ----list users---//
     socket.on("disconnect", () => {
-        listUsers.pop();
+        const connectUsers = listUsers.filter(user => user.id !== newUser.getId());
 
-        console.log("Disconnect:client", userId);
+        listUsers = [...connectUsers];
+
+        console.log("Disconnect:client", newUser.getId());
         io.emit("welcome", {
             listUsers: listUsers,
             count: io.engine.clientsCount

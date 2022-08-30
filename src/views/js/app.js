@@ -10,6 +10,7 @@ const tomessage = document.getElementById("tomessage");
 const dropdownusers = document.getElementById("dropdownusers");
 const btnEmoji = document.getElementById("btnEmoji");
 const cajaEmojis = document.querySelector('emoji-picker');
+const todos = document.getElementById("todos");
 
 // instance emoji piker
 const emojis = new Emoji(cajaEmojis, btnEmoji, msg);
@@ -19,8 +20,11 @@ let statusToMessages = "Todos";
 
 function hadleClick (el) {
     const name = el.innerText.split("\n", 2)[1];
-    console.log(name)
-    tomessage.textContent = name;
+    Toastify({
+        text: "Se enviara mensaje a " + name,
+        duration: 2500,  
+    }).showToast();
+    tomessage.textContent = "a "+ name;
     statusToMessages = el.id;
 }
 
@@ -82,8 +86,6 @@ function loadListUsers (list) {
 
     dropdownusers.innerHTML = "";
 
-    console.log(userLocal)
-
     list.forEach(item => {
         const initial = item.name.charAt(0).toUpperCase();
         dropdownusers.innerHTML += `
@@ -141,7 +143,7 @@ socket.on("typing:received", (status) => {
     typing.textContent = status;
 })
 
-
+/* ----------events to button handlers --------*/
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (msg.value) {
@@ -159,8 +161,19 @@ form.addEventListener("submit", (e) => {
         userItem.innerHTML = updateUsername(data.name.charAt(0).toUpperCase(), data.name);
 
         msg.value = "";
-        socket.emit("typing:send", data); 
+        socket.emit("typing:send", data);
     }
+})
+
+todos.addEventListener("click", () => {
+    console.log("Todos!")
+    statusToMessages = "Todos";
+    tomessage.textContent = "a todos";
+    Toastify({
+        text: "Se enviara mensaje a Todos",
+        duration: 2500,  
+    }).showToast();
+    
 })
 
 msg.addEventListener("input", (e) => {
@@ -179,7 +192,6 @@ btnEmoji.onclick = () => {
 cajaEmojis.addEventListener('emoji-click', e => {
     emojis.write(e);
 })
-  
 
 
 //------toogle button menu-----//

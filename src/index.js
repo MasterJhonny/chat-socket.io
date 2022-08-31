@@ -7,7 +7,7 @@ const { User } = require('./user');
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 
 let listUsers = []

@@ -11,12 +11,50 @@ const dropdownusers = document.getElementById("dropdownusers");
 const btnEmoji = document.getElementById("btnEmoji");
 const cajaEmojis = document.querySelector('emoji-picker');
 const todos = document.getElementById("todos");
+const btnMode = document.getElementById("btnMode")
+const $nav = document.querySelector("nav");
+const $main = document.querySelector("main");
+const $footer = document.querySelector("footer");
+const tovar = document.getElementById("tovar");
+const title = document.getElementById("title");
+const listTag = document.querySelectorAll("span");
+const listInput = document.querySelectorAll("input");
 
 // instance emoji piker
 const emojis = new Emoji(cajaEmojis, btnEmoji, msg);
 
 let userLocal = {}
 let statusToMessages = "Todos";
+
+function handleModeAparence () {
+    title.classList.toggle("mode-dark");
+    $nav.classList.toggle("has-background-primary-light");
+    $nav.classList.toggle("is-dark");
+    tovar.classList.toggle("mode-dark");
+    $main.classList.toggle("mode-dark");
+    $footer.classList.toggle("has-background-primary-light");
+    $footer.classList.toggle("mode-dark");
+
+    listInput.forEach(item => item.classList.toggle("input-dark"));
+    
+    const valor = $main.classList.contains("mode-dark");
+    if (valor) {
+        listTag.forEach(item => {
+            item.classList.remove("is-light");  
+            item.classList.add("is-dark");
+        });
+        btnMode.innerHTML = `<strong>Modo Light</strong>`;
+        localStorage.setItem("mode", "dark");
+    } else {
+        localStorage.setItem("mode", "light");
+        listTag.forEach(item => {
+            item.classList.add("is-light");  
+            item.classList.remove("is-dark");
+        });
+        btnMode.innerHTML = `<strong>Modo Dark</strong>`;
+    }
+   
+}
 
 function hadleClick (el) {
     const name = el.innerText.split("\n", 2)[1];
@@ -112,9 +150,7 @@ function updateUsername (initial, username) {
 /* -----------on socket io events ---------------*/
 socket.on('connect', () => {
     console.log('connection!', socket.id);
-    
     socketStatus()
-    
 })
 
 socket.on('disconnect', () => {
@@ -165,6 +201,13 @@ form.addEventListener("submit", (e) => {
     }
 })
 
+btnMode.addEventListener("click", () => {
+    console.log("mode!")
+    
+    handleModeAparence();
+
+}) 
+
 todos.addEventListener("click", () => {
     console.log("Todos!")
     statusToMessages = "Todos";
@@ -196,6 +239,13 @@ cajaEmojis.addEventListener('emoji-click', e => {
 
 //------toogle button menu-----//
 document.addEventListener('DOMContentLoaded', () => {
+
+    const mode = localStorage.getItem("mode");
+
+    if (mode === "dark") {
+        console.log(mode)
+        handleModeAparence();
+    }
 
     // Get all "navbar-burger" elements
     const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);

@@ -127,7 +127,18 @@ body {
 .view {
     display: flex;
 }
+.mode-dark {
+    background-color: #423F3E;
+    color: #fff;
+}
 
+.input-dark {
+    background-color: #161616;
+    color: #fff;
+}
+.input-dark::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
 
 /* --------responseive------- */
 @media (min-width: 400px) {
@@ -142,6 +153,9 @@ body {
     }
     .tovar-info {
         padding-top: 0;
+    }
+    .main-main {
+        height: 72vh;
     }
 }
 

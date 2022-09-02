@@ -22,7 +22,7 @@
             <div class="navbar-brand">
               <a class="navbar-item" href="#">
                 <img src="https://cdn-icons-png.flaticon.com/512/1089/1089876.png">
-                <h1 class="subtitle ml-5">App Chat</h1>
+                <h1 class="subtitle ml-5" id="title">App Chat</h1>
               </a>
               <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
@@ -44,26 +44,23 @@
                   Enviar a todos
                 </span>
               </div>
-              <!-- <div class="navbar-end">
+              <div class="navbar-end">
                 <div class="navbar-item">
                   <div class="buttons">
-                    <a class="button is-primary">
-                      <strong>Sign up</strong>
-                    </a>
-                    <a class="button is-light">
-                      Log in
-                    </a>
+                    <button class="button is-primary" id="btnMode">
+                      <strong>Modo Dark</strong>
+                    </button>
                   </div>
                 </div>
               </div>
-            </div> -->
+            </div>
           </nav>
-          <div class="tovar">
+          <div class="tovar" id="tovar">
               <span class="icon-text container-box tovar-info">
                   <span class="icon">
                       <i class="fa-solid fa-user"></i>
                   </span>
-                  <span class="tag is-success is-light" id="status" >en linea</span>
+                  <span class="tag is-light" id="status" >en linea</span>
                   <div class="control container-box">
                       <span class="m-5">Name:</span>
                       <input class="input is-normal mr-2" id="username" type="text" placeholder="NAME" value="User1" autocomplete="name">
